@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const authMiddleWare = (req, res, next) => {
+const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -11,8 +11,8 @@ const authMiddleWare = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.userId) {
-            req.userId = decoded.userId;
+        if (decoded.id) {
+            req.userId = decoded.id;
             next();
         }
         else {
@@ -32,4 +32,4 @@ function authorize(roles) {
     }
 }
 
-module.exports = { authMiddleWare, authorize }
+module.exports = { authenticate, authorize }

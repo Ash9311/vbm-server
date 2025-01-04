@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(router);
 
 app.use("/api/v1", mainRouter);
+app.use("/api/v1", mainRouter)
 
 // router.get("/something", async (req, res) => {
 //     res.status(200).json("something")
