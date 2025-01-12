@@ -31,13 +31,36 @@ router.post("/donations", authenticate, async (req, res) => {
     }
 
     try {
-        const donation = await prisma.donation.create({
-            data: {
-                amount,
-                year,
-                userId: req.userId
+
+        const existingDonation = await prisma.donation.findUnique({
+            where: {
+                userId_year: {
+                    userId: req.userId,
+                    year: year
+                }
             }
-        });
+        })
+
+        let donation;
+        if (existingDonation) {
+            donation = await prisma.donation.update({
+                where: {
+                    id: existingDonation.id
+                },
+                data: {
+                    amount: existingDonation.amount + amount
+                }
+            })
+        }
+        else {
+            donation = await prisma.donation.update({
+                data: {
+                    amount,
+                    year,
+                    userId: req.userId
+                }
+            });
+        }
         res.status(201).json({ message: "Donation successfully recorded.", donation });
     } catch (error) {
         res.status(500).json({ error: "Failed to create donation." })
